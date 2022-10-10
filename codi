@@ -1,0 +1,7 @@
+import TKconsol
+var str a = text: asdf
+#writeln a
+if a == asbf {
+    writeln a
+}
+/stop
