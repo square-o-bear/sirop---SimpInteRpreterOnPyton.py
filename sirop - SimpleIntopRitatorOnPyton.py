@@ -1,103 +1,115 @@
 import tkinter
 import random
 
+
 def findSplit (spis, finded):
     for i in range(0, len(spis)):
         if spis[i] == finded:
             return i
 
+
+root = tkinter.Tk()
 c = open('codi', 'r')
 codi = [str(i) for i in c.read().split()]
-root = tkinter.Tk()
-labelText = tkinter.Label(text='')
 doit = True
 ii = 0
 per = {}
-mods = {"TKconsol": False}
+mods = {'TKconsol': False}
 a = 0
+ifi = []
 
 while doit:
-    # dop (dio)
-    if codi[ii] == '/stop':
+    # dop
+    if (codi[ii] == '/stop') | (codi[ii] == '/стоп'):
         doit = False
-    elif codi[ii] == '/import':
+    elif (codi[ii] == '/import') | (codi[ii] == '/добавить'):
         mods[codi[ii+1]] = True
 
     # sozdanie
-    elif (codi[ii] == 'var') & (codi[ii+1] == 'int'):
-        per[codi[ii+2]] = 0
-        labelText = tkinter.Label(text=f'zadali peremenu {codi[ii+2]} classa int')
-        labelText.pack()
+    elif (codi[ii] == 'var') | (codi[ii] == 'создать'):
+        if (codi[ii+1] == 'int') | (codi[ii+1] == 'число'):
+            per[codi[ii+2]] = 0
+        elif (codi[ii+1] == 'str') | (codi[ii+1] == 'строка'):
+            per[codi[ii+2]] = ''
+        elif (codi[ii+1] == 'tf') | (codi[ii+1] == 'пл'):
+            per[codi[ii+2]] = False
 
-    elif (codi[ii] == 'var') & (codi[ii+1] == 'str'):
-        per[codi[ii+2]] = ''
-        labelText = tkinter.Label(text=f'zadali peremenu {codi[ii+2]} classa str')
-        labelText.pack()
-    elif (codi[ii] == 'var') & (codi[ii+1] == 'tf'):
-        per[codi[ii+2]] = False
-        labelText = tkinter.Label(text=f'zadali peremenu {codi[ii+2]} classa tf')
-        labelText.pack()
-
-    # zadati
-    elif (codi[ii] == '=') & (codi[ii+1] == 'read'):
+    elif codi[ii] == '+=':
+        if (codi[ii+1] == 'int:') | (codi[ii+1] == 'число:'):
+            per[codi[ii-1]] += int(codi[ii+2])
+        if (codi[ii+1] == 'per:') | (codi[ii+1] == 'переменная:'):
+            per[codi[ii-1]] += int(per[codi[ii+2]])
+    elif (codi[ii] == '=') & ((codi[ii+1] == 'read') | (codi[ii + 1] == 'прочитать')):
         if type(per[codi[ii-1]]).__name__ == 'int':
             per[codi[ii-1]] = int(input())
-            labelText = tkinter.Label(text=f'perezadali {codi[ii-1]} class int chehez "read"')
-            labelText.pack()
         elif type(per[codi[ii-1]]).__name__ == 'str':
             per[codi[ii-1]] = input()
-            labelText = tkinter.Label(text=f'perezadali {codi[ii-1]} class str chehez "read"')
-            labelText.pack()
 
-    elif (codi[ii] == '=') & (codi[ii+1] == 'random'):
+    elif (codi[ii] == '=') & ((codi[ii+1] == 'random') | (codi[ii+1] == 'рандомное')):
         per[codi[ii-1]] = random.random()*10*len(codi[ii+2])//1
 
-    elif (codi[ii] == '=') & (codi[ii+1] == 'text:'):
+    elif (codi[ii] == '=') & ((codi[ii+1] == 'text:') | (codi[ii + 1] == 'текст:')):
         if type(per[codi[ii-1]]).__name__ == 'str':
             per[codi[ii-1]] = codi[ii+2]
-            labelText = tkinter.Label(text=f'perezadali {codi[ii-1]} classa str cherez "="')
-            labelText.pack()
         elif type(per[codi[ii-1]]).__name__ == 'int':
             per[codi[ii-1]] = int(codi[ii+2])
-            labelText = tkinter.Label(text=f'perezadali {codi[ii-1]} classa int cherez "="')
-            labelText.pack()
         elif type(per[codi[ii-1]]).__name__ == 'bool':
-            if (codi[ii+2] == 'true') | (codi[ii+2] == 'True'):
+            if (codi[ii+2] == 'true') | (codi[ii+2] == 'True') | (codi[ii+2] == 'правда') | (codi[ii+2] == 'Правда'):
                 per[codi[ii-1]] = True
-            if (codi[ii+2] == 'false') | (codi[ii+2] == 'False'):
+            if (codi[ii+2] == 'false') | (codi[ii+2] == 'False') | (codi[ii+2] == 'ложь') | (codi[ii+2] == 'Ложь'):
                 per[codi[ii-1]] = False
-            labelText = tkinter.Label(text=f'perezadali {codi[ii - 1]} classa tf cherez "="')
-            labelText.pack()
 
     # pechati
-    elif codi[ii] == 'write':
-        if codi[ii+1] == 'text:':
+    elif (codi[ii] == 'write') | (codi[ii] == 'напечатать'):
+        if (codi[ii+1] == 'text:') | (codi[ii+1] == 'текст:'):
             print(codi[ii+2], end='')
-            labelText = tkinter.Label(text=f'napechatali {codi[ii+2]}')
-            labelText.pack()
         else:
             print(per[codi[ii+1]], end='')
-        labelText = tkinter.Label(text=f'napechatali peremenu {codi[ii+1]} bez perenosa stroki')
-        labelText.pack()
-
-    elif codi[ii] == 'writeln':
-        if codi[ii+1] == 'text:':
+    elif (codi[ii] == 'writeln') | (codi[ii] == 'напечататьСтрока'):
+        if (codi[ii+1] == 'text:') | (codi[ii+1] == 'текст:'):
             print(codi[ii+2])
         else:
             print(per[codi[ii+1]])
-        labelText = tkinter.Label(text=f'napechatali peremenu {codi[ii+1]} s perenosa stroki')
-        labelText.pack()
 
     # if / esli
-    elif codi[ii] == 'if':
-        if codi[ii+2] == '==':
-            if per[codi[ii+1]] != codi[ii+3]:
-                codi[ii:findSplit(codi, '}')] = ''
-            print(codi)
+    elif (codi[ii] == 'if') | (codi[ii] == 'если'):
+        ifi = []
+        for i in range(ii, findSplit(codi, '}')):
+            if (codi[i] == 'per:') | (codi[i] == 'переменная:'):
+                ifi.append(per[codi[i+1]])
+            elif (codi[i] == 'text:') | (codi[i] == 'строка:'):
+                ifi.append(codi[ii+5])
+            elif (codi[i] == 'int:') | (codi[i] == 'число:'):
+                ifi.append(int(codi[ii+5]))
+        if codi[ii+3] == '==':
+            if ifi[0] != ifi[1]:
+                codi[ii+1:findSplit(codi, '}') + 1] = ''
+        if codi[ii+3] == '>':
+            if ifi[0] <= ifi[1]:
+                codi[ii:findSplit(codi, '}') + 1] = ''
+        if codi[ii+3] == '>=':
+            if ifi[0] < ifi[1]:
+                codi[ii:findSplit(codi, '}') + 1] = ''
+        if codi[ii+3] == '<':
+            if ifi[0] >= ifi[1]:
+                codi[ii:findSplit(codi, '}') + 1] = ''
+        if codi[ii+3] == '<=':
+            if ifi[0] > ifi[1]:
+                codi[ii:findSplit(codi, '}') + 1] = ''
+        if (codi[ii+3] == '<>') | (codi[ii+3] == '><') | (codi[ii+3] == '!=') | (codi[ii+3] == '=!'):
+            if ifi[0] != ifi[1]:
+                codi[ii:findSplit(codi, '}') + 1] = ''
+
+    # repeat
+    elif codi[ii] == 'repeat':
+        if codi[ii+1] == 'int:':
+            print('ok')
+        if codi[ii+1] == 'per:':
+            print('ok')
 
     ii += 1
 
-if mods["TKconsol"]:
+if mods['TKconsol']:
     root.geometry('400x400')
-    root.title('codi')
+    root.title('sirop #TKconsole')
     root.mainloop()
