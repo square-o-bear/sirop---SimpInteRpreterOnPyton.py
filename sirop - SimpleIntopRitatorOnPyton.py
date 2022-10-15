@@ -1,4 +1,3 @@
-import tkinter
 import random
 
 
@@ -8,108 +7,59 @@ def findSplit (spis, finded):
             return i
 
 
-root = tkinter.Tk()
 c = open('codi', 'r')
 codi = [str(i) for i in c.read().split()]
-doit = True
-ii = 0
-per = {}
-mods = {'TKconsol': False}
-a = 0
-ifi = []
+mods = {'TKconsole': False}
+per = {'mods': mods}
 
-while doit:
-    # dop
-    if (codi[ii] == '/stop') | (codi[ii] == '/стоп'):
-        doit = False
-    elif (codi[ii] == '/import') | (codi[ii] == '/добавить'):
-        mods[codi[ii+1]] = True
 
-    # sozdanie
-    elif (codi[ii] == 'var') | (codi[ii] == 'создать'):
-        if (codi[ii+1] == 'int') | (codi[ii+1] == 'число'):
-            per[codi[ii+2]] = 0
-        elif (codi[ii+1] == 'str') | (codi[ii+1] == 'строка'):
-            per[codi[ii+2]] = ''
-        elif (codi[ii+1] == 'tf') | (codi[ii+1] == 'пл'):
-            per[codi[ii+2]] = False
+def siropCodi (spis):
+    ii = 0
+    doit = True
+    while doit:
+        if spis[ii] == '/import':
+            mods[spis[ii+1]] = True
+        if spis[ii] == '/stop':
+            doit = False
+        elif spis[ii] == 'var':
+            if spis[ii+1] == 'int:':
+                per[spis[ii+2]] = 0
+            if spis[ii+1] == 'text:':
+                per[spis[ii+2]] = ''
 
-    elif codi[ii] == '+=':
-        if (codi[ii+1] == 'int:') | (codi[ii+1] == 'число:'):
-            per[codi[ii-1]] += int(codi[ii+2])
-        if (codi[ii+1] == 'per:') | (codi[ii+1] == 'переменная:'):
-            per[codi[ii-1]] += int(per[codi[ii+2]])
-    elif (codi[ii] == '=') & ((codi[ii+1] == 'read') | (codi[ii + 1] == 'прочитать')):
-        if type(per[codi[ii-1]]).__name__ == 'int':
-            per[codi[ii-1]] = int(input())
-        elif type(per[codi[ii-1]]).__name__ == 'str':
-            per[codi[ii-1]] = input()
+        elif (spis[ii] == 'writeln') | (spis[ii] == 'println'):
+            if spis[ii+1] == 'per:':
+                print(per[spis[ii+2]])
+            elif (spis[ii+1] == 'text:') | (spis[ii+1] == 'int:'):
+                print(spis[ii+2])
+        elif (spis[ii] == 'write') | (spis[ii] == 'print'):
+            if spis[ii+1] == 'per:':
+                print(per[spis[ii+2]], end='')
+            elif (spis[ii+1] == 'text:') | (spis[ii+1] == 'int:'):
+                print(spis[ii+2], end='')
 
-    elif (codi[ii] == '=') & ((codi[ii+1] == 'random') | (codi[ii+1] == 'рандомное')):
-        per[codi[ii-1]] = random.random()*10*len(codi[ii+2])//1
+        elif spis[ii] == '+=':
+            if spis[ii+1] == 'int:':
+                per[spis[ii-1]] = int(per[spis[ii-1]]) + int(spis[ii+2])
+            if spis[ii+1] == 'text:':
+                per[spis[ii-1]] += spis[ii+2]
 
-    elif (codi[ii] == '=') & ((codi[ii+1] == 'text:') | (codi[ii + 1] == 'текст:')):
-        if type(per[codi[ii-1]]).__name__ == 'str':
-            per[codi[ii-1]] = codi[ii+2]
-        elif type(per[codi[ii-1]]).__name__ == 'int':
-            per[codi[ii-1]] = int(codi[ii+2])
-        elif type(per[codi[ii-1]]).__name__ == 'bool':
-            if (codi[ii+2] == 'true') | (codi[ii+2] == 'True') | (codi[ii+2] == 'правда') | (codi[ii+2] == 'Правда'):
-                per[codi[ii-1]] = True
-            if (codi[ii+2] == 'false') | (codi[ii+2] == 'False') | (codi[ii+2] == 'ложь') | (codi[ii+2] == 'Ложь'):
-                per[codi[ii-1]] = False
+        elif spis[ii] == '=':
+            if spis[ii+1] == 'random':
+                per[spis[ii-1]] = random.random()*(10*len(codi[ii+2]))//1
+            elif (spis[ii+1] == 'read') | (spis[ii+1] == 'input'):
+                if type(per[spis[ii-1]]).__name__ == 'str':
+                    per[spis[ii-1]] = input()
+                if type(per[spis[ii-1]]).__name__ == 'int':
+                    per[spis[ii-1]] = int(input())
+            else:
+                per[spis[ii-1]] = spis[ii+1]
 
-    # pechati
-    elif (codi[ii] == 'write') | (codi[ii] == 'напечатать'):
-        if (codi[ii+1] == 'text:') | (codi[ii+1] == 'текст:'):
-            print(codi[ii+2], end='')
-        else:
-            print(per[codi[ii+1]], end='')
-    elif (codi[ii] == 'writeln') | (codi[ii] == 'напечататьСтрока'):
-        if (codi[ii+1] == 'text:') | (codi[ii+1] == 'текст:'):
-            print(codi[ii+2])
-        else:
-            print(per[codi[ii+1]])
+        elif spis[ii] == 'repeat':
+            for i in range(1, int(spis[ii+1])):
+                siropCodi(spis[findSplit(spis, '{') : findSplit(spis, '}')+1])
 
-    # if / esli
-    elif (codi[ii] == 'if') | (codi[ii] == 'если'):
-        ifi = []
-        for i in range(ii, findSplit(codi, '}')):
-            if (codi[i] == 'per:') | (codi[i] == 'переменная:'):
-                ifi.append(per[codi[i+1]])
-            elif (codi[i] == 'text:') | (codi[i] == 'строка:'):
-                ifi.append(codi[ii+5])
-            elif (codi[i] == 'int:') | (codi[i] == 'число:'):
-                ifi.append(int(codi[ii+5]))
-        if codi[ii+3] == '==':
-            if ifi[0] != ifi[1]:
-                codi[ii+1:findSplit(codi, '}') + 1] = ''
-        if codi[ii+3] == '>':
-            if ifi[0] <= ifi[1]:
-                codi[ii:findSplit(codi, '}') + 1] = ''
-        if codi[ii+3] == '>=':
-            if ifi[0] < ifi[1]:
-                codi[ii:findSplit(codi, '}') + 1] = ''
-        if codi[ii+3] == '<':
-            if ifi[0] >= ifi[1]:
-                codi[ii:findSplit(codi, '}') + 1] = ''
-        if codi[ii+3] == '<=':
-            if ifi[0] > ifi[1]:
-                codi[ii:findSplit(codi, '}') + 1] = ''
-        if (codi[ii+3] == '<>') | (codi[ii+3] == '><') | (codi[ii+3] == '!=') | (codi[ii+3] == '=!'):
-            if ifi[0] != ifi[1]:
-                codi[ii:findSplit(codi, '}') + 1] = ''
+        ii += 1
 
-    # repeat
-    elif codi[ii] == 'repeat':
-        if codi[ii+1] == 'int:':
-            print('ok')
-        if codi[ii+1] == 'per:':
-            print('ok')
 
-    ii += 1
-
-if mods['TKconsol']:
-    root.geometry('400x400')
-    root.title('sirop #TKconsole')
-    root.mainloop()
+siropCodi(codi)
