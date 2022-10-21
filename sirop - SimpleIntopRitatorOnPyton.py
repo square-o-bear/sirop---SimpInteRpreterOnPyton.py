@@ -11,15 +11,22 @@ def findSplit (spis, finded):
 c = open('codi', 'r')
 codi = [str(i) for i in c.read().split()]
 mods = {'TKconsole': False}
-per = {'mods': mods}
+settings = {'ru': False, 'short': False}
+per = {}
 root = tkinter.Tk()
 textLabel = tkinter.Label(text='')
-
 
 def siropCodi (spis):
     for ii in range(0, len(spis)):
         #print(ii)
-        if spis[ii] == '/import':
+        if spis[ii] == '/settings':
+            for i in range(findSplit(spis, '/settings'), findSplit(spis, '/')):
+                if spis[i] == 'ru':
+                    settings['ru'] = True
+                elif spis[i] == 'short':
+                    settings['short'] = True
+            print(settings)
+        elif spis[ii] == '/import':
             mods[spis[ii+1]] = True
             # TKconsole
             textLabel = tkinter.Label(text=f'import {spis[ii+1]}')
@@ -96,14 +103,11 @@ def siropCodi (spis):
                 per[spis[ii-1]] = spis[ii+1]
 
         elif spis[ii] == 'repeat':
-            # TKconsole
             textLabel = tkinter.Label(text=f'repeat {int(spis[ii+1])}')
             textLabel.pack()
+            # TKconsole /\
             for i in range(1, int(spis[ii+1])):
                 siropCodi(spis[findSplit(spis, '{') : findSplit(spis, '}')+1])
-
-        ii += 1
-
 
 siropCodi(codi)
 
